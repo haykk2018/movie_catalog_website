@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/', [MainController::class, 'showAllMovies']);
+Route::get('/movie/{id}', [MainController::class, 'showMovie']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -10,6 +10,13 @@ class MainController extends Controller
 
     public function showAllMovies(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
     {
-        return view('index', ['movies' => Movie::all()]);
+        $all_movies = Movie::all();
+        return view('all_movies', ['movies' => $all_movies]);
+    }
+
+    public function showMovie($id): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    {
+        $movie = Movie::findOrFail($id);
+        return view('movie', ['movie' => $movie]);
     }
 }

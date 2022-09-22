@@ -6,21 +6,20 @@
     <title>Catalog Movie Site</title>
 </head>
 <body>
-HELLO
 @foreach($movies as $movie)
-    <div>
+    <div>        {{--  categories  --}}
+
         <div>{{$movie->title}}</div>
         <div>{{$movie->short_description}}</div>
-        <div><img src="{{$post->img ?? URL::asset('images/blank.jpg')}}" alt="" width="" height=""></div>
-        {{--  categories  --}}
+        <div><img src="{{$movie->img_src ?? URL::asset('images/blank.jpg')}}" alt="" width="" height=""></div>
         <div>
             @foreach($movie->categories as $category)
                 <p>Category: {{$category->name}}</p>
             @endforeach
         </div>
         {{--      end categories  --}}
+        <hr>
     </div>
 @endforeach
-<hr>
 </body>
 </html>
