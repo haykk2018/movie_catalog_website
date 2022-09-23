@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Movie;
+use Barryvdh\Debugbar\Facades\Debugbar;
+use DB;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -15,7 +17,8 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return "ok";
+        $all_movies = Movie::all();
+        return view('admin/all_movies', ['movies' => $all_movies]);
     }
 
     /**
@@ -25,30 +28,39 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        $movie = new Movie();
+        $categories = Category::all();
+        return view('admin/movie_new', ['movie' => $movie, 'categories' => $categories]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        $movie = new Movie();
+        $movie->title = $request->title;
+        $movie->short_description = $request->short_description;
+        $movie->save();
+        $movie->refresh();
+        $movie->categories()->attach($request->category);
+        $movie->save();
+        return redirect('admin');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-
-    }
+//    public function show($id)
+//    {
+//
+//    }
 
     /**
      * Show the form for editing the specified resource.
@@ -60,31 +72,41 @@ class AdminController extends Controller
     {
         $movie = Movie::findOrFail($id);
         $categories = Category::all();
-        return view('admin/movie_edit', ['movie' => $movie,'categories' => $categories]);
+        return view('admin/movie_edit', ['movie' => $movie, 'categories' => $categories]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        Movie::creating($request->all());
-        return $this->index();
+        $movie = Movie::find($request->id);
+        $movie->title = $request->title;
+        $movie->short_description = $request->short_description;
+        $movie->categories()->detach();
+        $movie->categories()->attach($request->category);
+        $movie->save();
+//        $movie = [];
+//        $movie['id']= $request->id;
+//        $movie['title'] = '"'.$request->title. '"';
+//        $movie['short_description'] = '"'.$request->short_description. '"';
+//        Movie::where('id', $movie['id'])->update($movie);
+        return redirect('admin');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function destroy(int $id): \Illuminate\Http\Response
+    public function destroy(int $id): \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
     {
         Movie::findOrFail($id)->delete();
-        return $this->index();
+        return redirect('admin');
     }
 }

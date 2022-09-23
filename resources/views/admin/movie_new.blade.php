@@ -7,18 +7,12 @@
 </head>
 <body>
 <div>
-    <form action="/admin/movie/{{$movie->id}}" method="POST" enctype="multipart/form-data">
-        @method('PUT')
+    <form action="/admin/movie" method="POST">
         @csrf
-        <input name="id" id="id" value="{{$movie->id}}" type="number">
-        <p><input name="title" id="title" value="{{$movie->title}}" type="text"/></p>
+        <p><input name="title" id="title" value="" type="text"/></p>
         <p>
     <textarea name="short_description" id="short_description">
-        {{$movie->short_description}}
     </textarea></p>
-        <p>
-        <div><img src="{{$movie->img_src ?? URL::asset('images/blank.jpg')}}" alt="" width="" height=""></div>
-        </p>
         {{--  categories  --}}
         <p>
         <div>

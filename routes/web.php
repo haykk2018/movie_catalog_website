@@ -22,6 +22,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 
+Route::get('/admin', [ADminController::class, 'index']);
 Route::resources([
     'admin/movie' => AdminController::class,
 ]);
