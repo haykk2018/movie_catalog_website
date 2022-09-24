@@ -22,10 +22,10 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 
-Route::get('/admin', [ADminController::class, 'index']);
-Route::resources([
-    'admin/movie' => AdminController::class,
-]);
+Route::get('/admin', [ADminController::class, 'index'])->middleware(['auth'])->name('index');;
+Route::group(['middleware' => 'auth'], function () {
+    Route::resources(['admin/movie' => AdminController::class,]);
+});
 
 //php artisan route:list
 require __DIR__ . '/auth.php';

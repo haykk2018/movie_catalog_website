@@ -7,13 +7,14 @@ use App\Models\Movie;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use DB;
 use Illuminate\Http\Request;
+use function PHPUnit\Framework\isEmpty;
 
 class AdminController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -24,7 +25,7 @@ class AdminController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function create()
     {
@@ -37,13 +38,11 @@ class AdminController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(Request $request)
     {
-        $movie = new Movie();
-        $movie->title = $request->title;
-        $movie->short_description = $request->short_description;
+        $movie = $this->fillData(['title','short_description'],new Movie(), $request);
         $movie->save();
         $movie->refresh();
         $movie->categories()->attach($request->category);
@@ -80,13 +79,12 @@ class AdminController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function update(Request $request, $id)
     {
-        $movie = Movie::find($request->id);
-        $movie->title = $request->title;
-        $movie->short_description = $request->short_description;
+        $movie = Movie::find($id);
+        $movie = $this->fillData(['title','short_description'],$movie, $request);
         $movie->categories()->detach();
         $movie->categories()->attach($request->category);
         $movie->save();
@@ -98,6 +96,7 @@ class AdminController extends Controller
         return redirect('admin');
     }
 
+
     /**
      * Remove the specified resource from storage.
      *
@@ -108,5 +107,17 @@ class AdminController extends Controller
     {
         Movie::findOrFail($id)->delete();
         return redirect('admin');
+    }
+
+    protected function fillData($fields,$data,$request)
+    {
+        foreach ($fields as $v) {
+            //echo'====================='.$v.'==================<br>'.$request->$v;
+            if (isset($request[$v])){
+                $data[$v]=$request[$v];
+               // echo'=======================================<br>'.$data[$v];
+            }
+        }
+        return($data);
     }
 }
