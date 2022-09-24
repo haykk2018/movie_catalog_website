@@ -9,7 +9,7 @@ use DB;
 use Illuminate\Http\Request;
 use function PHPUnit\Framework\isEmpty;
 
-class AdminController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,8 +18,8 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $all_movies = Movie::all();
-        return view('admin/all_movies', ['movies' => $all_movies]);
+        $categories = Category::all();
+        return view('admin/all_categories', ['categories' => $categories]);
     }
 
     /**
@@ -29,9 +29,8 @@ class AdminController extends Controller
      */
     public function create()
     {
-        $movie = new Movie();
-        $categories = Category::all();
-        return view('admin/movie_new', ['movie' => $movie, 'categories' => $categories]);
+        $category = new Category();
+        return view('admin/category_new', ['category' => $category]);
     }
 
     /**
@@ -42,24 +41,11 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        $movie = $this->fillData(['title','short_description'],new Movie(), $request);
-        $movie->save();
-        $movie->refresh();
-        $movie->categories()->attach($request->category);
-        $movie->save();
-        return redirect('admin');
+        $category = new Category();
+        $category->name = $request->name;
+        $category->save();
+        return redirect('admin/categories');
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-//    public function show($id)
-//    {
-//
-//    }
 
     /**
      * Show the form for editing the specified resource.
@@ -69,9 +55,8 @@ class AdminController extends Controller
      */
     public function edit(int $id): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application
     {
-        $movie = Movie::findOrFail($id);
-        $categories = Category::all();
-        return view('admin/movie_edit', ['movie' => $movie, 'categories' => $categories]);
+        $category = Category::findOrFail($id);
+        return view('admin/category_edit', ['category' => $category]);
     }
 
     /**
@@ -83,17 +68,10 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $movie = Movie::find($id);
-        $movie = $this->fillData(['title','short_description'],$movie, $request);
-        $movie->categories()->detach();
-        $movie->categories()->attach($request->category);
-        $movie->save();
-//        $movie = [];
-//        $movie['id']= $request->id;
-//        $movie['title'] = '"'.$request->title. '"';
-//        $movie['short_description'] = '"'.$request->short_description. '"';
-//        Movie::where('id', $movie['id'])->update($movie);
-        return redirect('admin');
+        $category = Category::find($id);
+        $category->name = $request->name;
+        $category->save();
+        return redirect('admin/categories');
     }
 
 
@@ -105,19 +83,8 @@ class AdminController extends Controller
      */
     public function destroy(int $id): \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
     {
-        Movie::findOrFail($id)->delete();
-        return redirect('admin');
+        Category::findOrFail($id)->delete();
+        return redirect('admin/categories');
     }
 
-    protected function fillData($fields,$data,$request)
-    {
-        foreach ($fields as $v) {
-            //echo'====================='.$v.'==================<br>'.$request->$v;
-            if (isset($request[$v])){
-                $data[$v]=$request[$v];
-               // echo'=======================================<br>'.$data[$v];
-            }
-        }
-        return($data);
-    }
 }

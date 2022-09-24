@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\MovieController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MainController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,10 +22,15 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
-
-Route::get('/admin', [ADminController::class, 'index'])->middleware(['auth'])->name('index');;
+//movie controller routes
+Route::get('/admin', [MovieController::class, 'index'])->middleware(['auth'])->name('index');;
 Route::group(['middleware' => 'auth'], function () {
-    Route::resources(['admin/movie' => AdminController::class,]);
+    Route::resources(['admin/movie' => MovieController::class,]);
+});
+//category controller routes
+Route::get('/admin/categories', [CategoryController::class, 'index'])->middleware(['auth'])->name('index');;
+Route::group(['middleware' => 'auth'], function () {
+    Route::resources(['admin/category' => CategoryController::class,]);
 });
 
 //php artisan route:list

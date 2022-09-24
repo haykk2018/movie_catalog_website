@@ -10,7 +10,6 @@
     <form action="/admin/movie/{{$movie->id}}" method="POST" enctype="multipart/form-data">
         @method('PUT')
         @csrf
-        <input name="id" id="id" value="{{$movie->id}}" type="number">
         <p><input name="title" id="title" value="{{$movie->title}}" type="text"/></p>
         <p>
     <textarea name="short_description" id="short_description">

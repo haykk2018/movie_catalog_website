@@ -7,10 +7,10 @@
 </head>
 <body>
 @foreach($movies as $movie)
-    <div>        {{--  categories  --}}
-
+    <div>
         <div>{{$movie->title}}</div>
         <div>{{$movie->short_description}}</div>
+        {{--  categories  --}}
         <div>
             @foreach($movie->categories as $category)
                 <p>Category: {{$category->name}}</p>
@@ -23,7 +23,6 @@
         <form action="/admin/movie/{{$movie->id}}" method="POST" enctype="multipart/form-data">
             @method('DELETE')
             @csrf
-{{--            <input name="id" id="id" value="{{$movie->id}}" type="number">--}}
             <button type="submit">delete</button>
         </form>
         </P>
