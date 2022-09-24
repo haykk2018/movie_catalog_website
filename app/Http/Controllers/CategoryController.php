@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Movie;
-use Barryvdh\Debugbar\Facades\Debugbar;
-use DB;
 use Illuminate\Http\Request;
-use function PHPUnit\Framework\isEmpty;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -41,8 +38,17 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:categories|max:50'
+        ]);
+        if ($validator->fails()) {
+            return redirect('admin/category/create')
+                ->withErrors($validator)
+                ->withInput();
+        }
+        $validated = $validator->validated();
         $category = new Category();
-        $category->name = $request->name;
+        $category->name = $validated['name'];
         $category->save();
         return redirect('admin/categories');
     }
@@ -68,8 +74,17 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:categories|max:50'
+        ]);
+        if ($validator->fails()) {
+            return redirect('admin/category/create')
+                ->withErrors($validator)
+                ->withInput();
+        }
+        $validated = $validator->validated();
         $category = Category::find($id);
-        $category->name = $request->name;
+        $category->name = $validated['name'];
         $category->save();
         return redirect('admin/categories');
     }

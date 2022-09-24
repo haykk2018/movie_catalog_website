@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Movie;
-use Barryvdh\Debugbar\Facades\Debugbar;
-use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use function PHPUnit\Framework\isEmpty;
 
 class MovieController extends Controller
@@ -42,11 +42,24 @@ class MovieController extends Controller
      */
     public function store(Request $request)
     {
-        $movie = $this->fillData(['title','short_description'],new Movie(), $request);
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|max:50',
+            'short_description' => 'max:250'
+        ]);
+        if ($validator->fails()) {
+            return redirect('admin/movie/create')
+                ->withErrors($validator)
+                ->withInput();
+        }
+        $validated = $validator->validated();
+        $movie = $this->fillData(['title', 'short_description'], new Movie(), $validated);
         $movie->save();
-        $movie->refresh();
-        $movie->categories()->attach($request->category);
-        $movie->save();
+        if($request->category){
+            $movie->refresh();
+            $movie->categories()->attach($request->category);
+            $movie->save();
+        }
+
         return redirect('admin');
     }
 
@@ -83,11 +96,26 @@ class MovieController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validator =Validator::make($request->all(), [
+            //if necessary to be unique (code 'Rule::unique('movies')->ignore($id)' for update action, for create(store) only 'unique' enough
+            //'title' => ['required', Rule::unique('movies')->ignore($id),'max:50'],
+            'title' => ['required','max:50'],
+            'short_description'=>[]
+        ]);
+        if ($validator->fails()) {
+            $redirectLink = 'admin/movie/'.$id.'/edit';
+            return redirect($redirectLink)
+                ->withErrors($validator)
+                ->withInput();
+        }
+        $validated = $validator->validated();
         $movie = Movie::find($id);
-        $movie = $this->fillData(['title','short_description'],$movie, $request);
-        $movie->categories()->detach();
-        $movie->categories()->attach($request->category);
-        $movie->save();
+        $movie = $this->fillData(['title', 'short_description'], $movie, $validated);
+        if($request->category) {
+            $movie->categories()->detach();
+            $movie->categories()->attach($request->category);
+            $movie->save();
+        }
 //        $movie = [];
 //        $movie['id']= $request->id;
 //        $movie['title'] = '"'.$request->title. '"';
@@ -109,15 +137,15 @@ class MovieController extends Controller
         return redirect('admin');
     }
 
-    protected function fillData($fields,$data,$request)
+    protected function fillData($fields, $data, $request)
     {
         foreach ($fields as $v) {
             //echo'====================='.$v.'==================<br>'.$request->$v;
-            if (isset($request[$v])){
-                $data[$v]=$request[$v];
-               // echo'=======================================<br>'.$data[$v];
+            if (isset($request[$v])) {
+                $data[$v] = $request[$v];
+                // echo'=======================================<br>'.$data[$v];
             }
         }
-        return($data);
+        return ($data);
     }
 }
