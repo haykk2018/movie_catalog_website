@@ -3,6 +3,7 @@
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +33,8 @@ Route::get('/admin/categories', [CategoryController::class, 'index'])->middlewar
 Route::group(['middleware' => 'auth'], function () {
     Route::resources(['admin/category' => CategoryController::class,]);
 });
-
+//file upload routes
+Route::get('/admin/upload-file', [UploadController::class, 'createForm'])->middleware(['auth']);
+Route::post('/admin/upload-file', [UploadController::class, 'fileUpload'])->middleware(['auth'])->name('fileUpload');
 //php artisan route:list
 require __DIR__ . '/auth.php';
