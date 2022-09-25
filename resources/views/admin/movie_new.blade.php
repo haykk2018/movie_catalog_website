@@ -15,10 +15,16 @@
         </ul>
     </div>
 @endif
+{{--for file upload--}}
+@if ($message = Session::get('success'))
+    <div class="alert alert-success">
+        <strong>{{ $message }}</strong>
+    </div>
+@endif
 <div>
-    <form action="/admin/movie" method="POST">
+    <form action="/admin/movie" method="POST" enctype="multipart/form-data">
         @csrf
-        <p><input name="title" id="title" value="" type="text"/></p>
+        <p><input name="title" id="title" value="" type="text"></p>
         <p>
     <textarea name="short_description" id="short_description">
     </textarea></p>
@@ -36,6 +42,7 @@
         </div>
         </p>
         {{--      end categories  --}}
+        <p> <input type="file" name="file" class="custom-file-input" id="chooseFile"></p>
         <P>
             <button type="submit">save</button>
         </P>

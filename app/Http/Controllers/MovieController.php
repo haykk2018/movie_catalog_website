@@ -39,22 +39,29 @@ class MovieController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:50',
-            'short_description' => 'max:250'
+            'short_description' => 'max:250',
+            'file' => 'required|mimes:img,png,jpg,jpeg,bmp|max:2048'
         ]);
         if ($validator->fails()) {
-            return redirect('admin/movie/create')
-                ->withErrors($validator)
-                ->withInput();
+            return redirect('admin/movie/create')->withErrors($validator)->withInput();
         }
         $validated = $validator->validated();
+
         $movie = $this->fillData(['title', 'short_description'], new Movie(), $validated);
+
+        //store file and get its path
+        $img_src = $this->storeFile('file', $request);
+
+        $movie->img_src = $img_src;
         $movie->save();
-        if($request->category){
+        // if new movie have category, we are refreshing that can do attach (it is possible if movie stored and his id defined)
+        if ($request->category) {
             $movie->refresh();
             $movie->categories()->attach($request->category);
             $movie->save();
@@ -63,12 +70,6 @@ class MovieController extends Controller
         return redirect('admin');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
     /**
      * Show the form for editing the specified resource.
      *
@@ -91,26 +92,31 @@ class MovieController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator =Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             //if necessary to be unique (code 'Rule::unique('movies')->ignore($id)' for update action, for create(store) only 'unique' enough
             //'title' => ['required', Rule::unique('movies')->ignore($id),'max:50'],
-            'title' => ['required','max:50'],
-            'short_description'=>[]
+            'title' => ['required', 'max:50'],
+            'short_description' => ['max:250'],
+            'file' => 'mimes:img,png,jpg,jpeg,bmp|max:2048'
         ]);
         if ($validator->fails()) {
-            $redirectLink = 'admin/movie/'.$id.'/edit';
-            return redirect($redirectLink)
-                ->withErrors($validator)
-                ->withInput();
+            $redirectLink = 'admin/movie/' . $id . '/edit';
+            return redirect($redirectLink)->withErrors($validator)->withInput();
         }
         $validated = $validator->validated();
+
         $movie = Movie::find($id);
         $movie = $this->fillData(['title', 'short_description'], $movie, $validated);
-        if($request->category) {
+
+        if ($request->hasFile('file')) {
+            $img_src = $this->storeFile('file', $request);
+            $movie->img_src = $img_src;
+        }
+        if ($request->category) {
             $movie->categories()->detach();
             $movie->categories()->attach($request->category);
-            $movie->save();
         }
+        $movie->save();
 //        $movie = [];
 //        $movie['id']= $request->id;
 //        $movie['title'] = '"'.$request->title. '"';
@@ -132,15 +138,19 @@ class MovieController extends Controller
         return redirect('admin');
     }
 
-    protected function fillData($fields, $data, $request)
+    protected function fillData(array $fields, Movie $data, $request): Movie
     {
         foreach ($fields as $v) {
-            //echo'====================='.$v.'==================<br>'.$request->$v;
             if (isset($request[$v])) {
                 $data[$v] = $request[$v];
-                // echo'=======================================<br>'.$data[$v];
             }
         }
         return ($data);
+    }
+    protected function storeFile(string $fileField, $request): bool|string
+    {
+        $fileName = time() . '_' . $request->$fileField->getClientOriginalName();
+        $img_src = $request->file($fileField)->storeAs('uploads', $fileName, 'public');
+        return $img_src;
     }
 }

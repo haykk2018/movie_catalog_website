@@ -15,6 +15,12 @@
         </ul>
     </div>
 @endif
+{{--for file upload--}}
+@if ($message = Session::get('success'))
+    <div class="alert alert-success">
+        <strong>{{ $message }}</strong>
+    </div>
+@endif
 <div>
 
     <form action="/admin/movie/{{$movie->id}}" method="POST" enctype="multipart/form-data">
@@ -26,7 +32,8 @@
         {{$movie->short_description}}
     </textarea></p>
         <p>
-        <div><img src="{{$movie->img_src ?? URL::asset('images/blank.jpg')}}" alt="" width="" height=""></div>
+        <div><img src="{{$movie->img_src ? URL::asset($movie->img_src) : URL::asset('images/blank.jpg')}}" alt=""
+                  width="" height=""></div>
         </p>
         {{--  categories  --}}
         <p>
@@ -42,6 +49,7 @@
         </div>
         </p>
         {{--      end categories  --}}
+        <p><input type="file" name="file" class="custom-file-input" id="chooseFile"></p>
         <P>
             <button type="submit">save</button>
         </P>
