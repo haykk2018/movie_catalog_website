@@ -7,7 +7,7 @@
     <div class="w3-row-padding w3-padding-16 w3-center" id="food">
     @foreach($movies as $movie)
         <div class="w3-quarter">
-            <img src="https://www.w3schools.com/w3images/sandwich.jpg" alt="Sandwich" style="width:100%">
+            <img src="{{$movie->img_src ?  url($movie->img_src): URL::asset('images/blank.jpg')}}" style="width:100%">
             <h3>{{$movie->title}}</h3>
             <p>{{$movie->short_description}}</p>
             <P> Genre Category:
