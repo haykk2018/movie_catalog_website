@@ -20,6 +20,7 @@ class MainController extends Controller
     public function showMovie(int $id): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
     {
         $movie = Movie::findOrFail($id);
-        return view('movie', ['movie' => $movie]);
+        $categories = Category::all();
+        return view('movie', ['movie' => $movie, 'categories'=>$categories]);
     }
 }

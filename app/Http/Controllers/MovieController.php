@@ -6,8 +6,6 @@ use App\Models\Category;
 use App\Models\Movie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use function PHPUnit\Framework\isEmpty;
 
 class MovieController extends Controller
 {
@@ -18,7 +16,7 @@ class MovieController extends Controller
      */
     public function index()
     {
-        $all_movies = Movie::all();
+        $all_movies = Movie::paginate(2);
         return view('admin/all_movies', ['movies' => $all_movies]);
     }
 
@@ -117,11 +115,6 @@ class MovieController extends Controller
             $movie->categories()->attach($request->category);
         }
         $movie->save();
-//        $movie = [];
-//        $movie['id']= $request->id;
-//        $movie['title'] = '"'.$request->title. '"';
-//        $movie['short_description'] = '"'.$request->short_description. '"';
-//        Movie::where('id', $movie['id'])->update($movie);
         return redirect('admin');
     }
 

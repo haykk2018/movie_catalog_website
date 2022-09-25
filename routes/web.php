@@ -18,10 +18,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [MainController::class, 'showAllMovies']);
 Route::get('/movie/{id}', [MainController::class, 'showMovie']);
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
 //movie controller routes
 Route::get('/admin', [MovieController::class, 'index'])->middleware(['auth'])->name('index');;
 Route::group(['middleware' => 'auth'], function () {

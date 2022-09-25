@@ -3,9 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @vite(['resources/js/app.js'])
     <title>Catalog Movie Site</title>
 </head>
-<body>
+<body class="container">
+<a href="/admin" class="btn btn-primary">Home Admin</a><a class="btn btn-primary" href="/admin/categories">categories</a>
+<br>
 @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
@@ -15,15 +18,20 @@
         </ul>
     </div>
 @endif
-<div>
+<div class="row">
+    <div class="col"></div>
+    <div class="col">
     <form action="/admin/category/{{$category->id}}" method="POST" enctype="multipart/form-data">
         @method('PUT')
         @csrf
-        <p><input name="name" id="name" value="{{$category->name}}" type="text"/></p>
+        <p>category name:</p>
+        <p><input class="form-input" name="name" id="name" value="{{$category->name}}" type="text"/></p>
           <P>
-            <button type="submit">save</button>
+            <button type="submit" class="btn btn-primary">save</button>
         </P>
     </form>
+</div>
+<div class="col"></div>
 </div>
 <hr>
 </body>
