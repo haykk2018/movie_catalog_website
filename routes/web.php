@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', [MainController::class, 'showAllMovies']);
 Route::get('/movie/{id}', [MainController::class, 'showMovie']);
+Route::get('/movies-by-category/{category}', [MainController::class, 'showMoViesByCategory']);
+Route::get('/movies-by-title-and-category/{title}/{category}', [MainController::class, 'showMoViesByTitleAndCategory']);
 
 //movie controller routes
 Route::get('/admin', [MovieController::class, 'index'])->middleware(['auth'])->name('index');;
@@ -45,7 +47,3 @@ Route::get('uploads/{filename}', function ($filename)
 
 //php artisan route:list
 require __DIR__ . '/auth.php';
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

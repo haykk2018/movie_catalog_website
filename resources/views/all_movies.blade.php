@@ -4,7 +4,7 @@
     @endforeach
 </x-movie.header>
 <x-movie.content>
-    <div class="w3-row-padding w3-padding-16 w3-center">
+    <div id="movies" class="w3-row-padding w3-padding-16 w3-center">
     @foreach($movies as $movie)
         <div class="w3-quarter">
             <a href="movie/{{$movie->id}}"><img src="{{$movie->img_src ?  url($movie->img_src): URL::asset('images/blank.jpg')}}"  style="width:100%"></a>

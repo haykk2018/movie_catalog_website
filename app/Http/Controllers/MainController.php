@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Movie;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class MainController extends Controller
 {
@@ -22,5 +20,19 @@ class MainController extends Controller
         $movie = Movie::findOrFail($id);
         $categories = Category::all();
         return view('movie', ['movie' => $movie, 'categories'=>$categories]);
+    }
+
+    public function showMoViesByCategory($categoryName){
+        $movies=Movie::whereHas('categories', function  ($q) use($categoryName){
+            $q->where('name','=',$categoryName );
+        })->get();
+        return view('ajax_movies', ['movies' =>  $movies]);
+    }
+
+    public function showMoViesByTitleAndCategory($title,$categoryName){
+        $movies=Movie::whereTitle($title)->whereHas('categories', function  ($q) use($categoryName){
+            $q->where('name','=',$categoryName );
+        })->get();
+        return view('ajax_movies', ['movies' =>  $movies]);
     }
 }
