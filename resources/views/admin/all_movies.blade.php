@@ -3,9 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @vite(['resources/js/app.js'])
     <title>Catalog Movie Site</title>
 </head>
 <body>
+<h2>Movie catalog Admin parth</h2>
+@if(isset($movies) || empoty($movies))
+    there are no movie
+@else
 @foreach($movies as $movie)
     <div>
         <div>{{$movie->title}}</div>
@@ -23,13 +28,15 @@
         <form action="/admin/movie/{{$movie->id}}" method="POST" enctype="multipart/form-data">
             @method('DELETE')
             @csrf
-            <button type="submit">delete</button>
+            <button type="submit" class="btn btn-primary">delete</button>
         </form>
         </P>
     </div>
-    <hr>
 @endforeach
-<p><a href="/admin/movie/create">new</a></p>
+@endif
 <hr>
+<p><a class="btn btn-primary" href="/admin/movie/create">new movie</a>
+<a class="btn btn-primary" href="/admin/category/create">new category</a></p>
+<br>
 </body>
 </html>
