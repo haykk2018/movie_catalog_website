@@ -1,3 +1,6 @@
+@if(!isset($movies) || $movies->count()==0)
+    There are no movie.
+@else
 @foreach($movies as $movie)
     <div class="w3-quarter">
         <a href="movie/{{$movie->id}}">
@@ -11,6 +14,7 @@
         </P>
     </div>
 @endforeach
+@endif
 
 
 

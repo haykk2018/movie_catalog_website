@@ -11,8 +11,8 @@
 <div class="row">
     <div class="col-2"></div>
     <div class="col">
-        @if(!isset($movies) or empty($movies))
-            there are no movie
+        @if(!isset($movies) || $movies->count()==0)
+            There are no movies.
         @else
             @foreach($movies as $movie)
                 <div>

@@ -12,18 +12,22 @@
 <div class="row">
     <div class="col"></div>
     <div class="col">
-        @foreach($categories as $category)
-            <p>
-                <input type="text" name="category" id="category" value="{{$category->name}} " readonly/>
-            <form action="/admin/category/{{$category->id}}" method="POST" enctype="multipart/form-data">
-                @method('DELETE')
-                @csrf
-                <button type="submit" class="btn btn-primary">delete</button>
-                <a href="/admin/category/{{$category->id}}/edit/" class="btn btn-primary">edit</a>
+        @if(!isset($categories) || $categories->count()==0)
+            There are no categories.
+        @else
+            @foreach($categories as $category)
+                <p>
+                    <input type="text" name="category" id="category" value="{{$category->name}} " readonly/>
+                <form action="/admin/category/{{$category->id}}" method="POST" enctype="multipart/form-data">
+                    @method('DELETE')
+                    @csrf
+                    <button type="submit" class="btn btn-primary">delete</button>
+                    <a href="/admin/category/{{$category->id}}/edit/" class="btn btn-primary">edit</a>
 
-            </form>
-            </p>
-        @endforeach
+                </form>
+                </p>
+            @endforeach
+        @endif
     </div>
     <div class="col"></div>
     <br>
