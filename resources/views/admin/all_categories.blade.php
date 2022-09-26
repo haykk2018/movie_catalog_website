@@ -29,7 +29,13 @@
             @endforeach
         @endif
     </div>
-    <div class="col"></div>
+    <div class="col">
+        <!-- Authentication -->
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button class="btn btn-primary" style="float: right">logout</button>
+        </form>
+    </div>
     <br>
     <hr>
     <p><a class="btn btn-primary" href="/admin/category/create">new category</a></p>

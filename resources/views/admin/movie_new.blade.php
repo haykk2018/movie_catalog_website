@@ -53,7 +53,13 @@
             </P>
         </form>
     </div>
-    <div class="col"></div>
+    <div class="col">
+        <!-- Authentication -->
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button class="btn btn-primary" style="float: right">logout</button>
+        </form>
+    </div>
 </div>
 <hr>
 </body>

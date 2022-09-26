@@ -45,9 +45,15 @@
             <a class="btn btn-primary" href="/admin/category/create">new category</a>
             <a class="btn btn-primary" href="/admin/categories">categories</a>
             <br>
-            {{ $movies->links('pagination::bootstrap-5') }}
+        {{ $movies->links('pagination::bootstrap-5') }}
     </div>
-    <div class="col-2"></div>
+    <div class="col-2">
+        <!-- Authentication -->
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button class="btn btn-primary" style="float: right">logout</button>
+        </form>
+    </div>
 
 </div>
 </body>
